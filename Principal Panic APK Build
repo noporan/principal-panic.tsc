@@ -1,0 +1,33 @@
+name: Build Unity APK
+
+on:
+  push:
+    branches:
+      - main  # যখন main ব্রাঞ্চে কিছু Push হবে, তখন Build হবে
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest  # বিল্ড হবে Ubuntu সার্ভারে
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Cache Unity Library
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/unity
+        key: ${{ runner.os }}-unity
+
+    - name: Unity - Build APK
+      uses: game-ci/unity-builder@v2
+      with:
+        targetPlatform: Android
+        unityVersion: 2021.3.32f1  # তুমি যে Unity version ব্যবহার করো
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: MyGame-APK
+        path: build/Android/*.apk
